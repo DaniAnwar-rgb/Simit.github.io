@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurir JajanYuk.com</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .kurir-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .kurir-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .kurir-header h1 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .kurir-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+        }
+        
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #28a745;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+        
+        .status-text {
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .status-text.online {
+            color: #28a745;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+        
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .pesanan-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pesanan-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pesanan-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pesanan-item.urgent {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #fff5f5 0%, #f8f9fa 100%);
+        }
+        
+        .pesanan-item.urgent::before {
+            content: "🔥";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.2em;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .pesanan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .pesanan-id {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        
+        .pesanan-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .status-baru {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-pickup {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-delivery {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .pesanan-detail {
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .pesanan-detail strong {
+            color: #333;
+        }
+        
+        .pesanan-lokasi {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        
+        .lokasi-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .lokasi-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .pesanan-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .btn-terima {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-pickup {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-selesai {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-navigasi {
+            background: #6f42c1;
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        
+        .no-pesanan {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+        
+        .earning-summary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .earning-amount {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .earning-label {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 480px) {
+            .kurir-container {
+                padding: 15px;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .pesanan-actions {
+                flex-direction: column;
+            }
+            
+            .kurir-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="kurir-container">
+        <!-- Header -->
+        <div class="kurir-header">
+            <h1>🏍 Kurir JajanYuk</h1>
+            <p style="color: #666;">Selamat datang, Andi Setiawan!</p>
+            
+            <div class="kurir-info">
+                <div class="status-toggle">
+                    <span class="status-text" id="status-text">Offline</span>
+                    <div class="toggle-switch" id="toggle-switch" onclick="toggleStatus()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div style="color: #666;">
+                    <div>📍 Area: Morobakung - Banyuurip</div>
+                    <div>🕐 20 Juni 2025, 14:30</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number" id="delivery-count">12</div>
+                <div class="stat-label">Pengantaran Hari Ini</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-number" id="earning-today">Rp 150.000</div>
+                <div class="stat-label">Pendapatan Hari Ini</div>
+            </div>
+        </div>
+
+        <!-- Pesanan Container -->
+        <div class="pesanan-container">
+            <h2 class="section-title">📋 Pesanan Aktif</h2>
+            
+            <div id="pesanan-list">
+                <!-- Pesanan 1 - Urgent -->
+                <div class="pesanan-item urgent">
+                    <div class="pesanan-header">
+                        <div class="pesanan-id">#JY2025001</div>
+                        <div class="pesanan-status status-baru">⏳ Pesanan Baru</div>
+                    </div>
+                    <div class="pesanan-detail">
+                        <strong>Pelanggan:</strong> Ibu Siti Aminah<br>
+                        <strong>Pesanan:</strong> 2x Bandeng Presto Phiephot<br>
+                        <strong>Total:</strong> Rp 90.000
+                    </div>
+                    <div class="pesanan-lokasi">
+                        <div class="lokasi-item">
+                            <span>🏪</span>
+                            <span><strong>Pickup:</strong> Bu Pipit - Desa Morobakung</span>
+                        </div>
+                        <div class="lokasi-item">
+                            <span>🏠</span>
+                            <span><strong>Antar ke:</strong> Jl. Raya Bungah No. 46 Bungah Gresik</span>
+                        </div>
+                        <div class="lokasi-item">
+                            <span>📏</span>
+                            <span><strong>Jarak:</strong> 2.5 km (~8 menit)</span>
+                        </div>
+                    </div>
+                    <div class="pesanan-actions">
+                        <button class="action-btn btn-terima" onclick="terimaPesanan('JY2025001')">
+                            ✅ Terima
+                        </button>
+                        <button class="action-btn btn-navigasi" onclick="bukaMaps('Bu Sari Banyuurip')">
+                            🗺 Navigasi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pesanan 2 - Sedang Pickup -->
+                <div class="pesanan-item">
+                    <div class="pesanan-header">
+                        <div class="pesanan-id">#JY2025002</div>
+                        <div class="pesanan-status status-pickup">🚗 Sedang Pickup</div>
+                    </div>
+                    <div class="pesanan-detail">
+                        <strong>Pelanggan:</strong> Bapak Joko Susilo<br>
+                        <strong>Pesanan:</strong> 1x Bakso Beranak Pak Supono<br>
+                        <strong>Total:</strong> Rp 45.000
+                    </div>
+                    <div class="pesanan-lokasi">
+                        <div class="lokasi-item">
+                            <span>🏪</span>
+                            <span><strong>Pickup:</strong> Pak Supono - Desa Morobakung</span>
+                        </div>
+                        <div class="lokasi-item">
+                            <span>🏠</span>
+                            <span><strong>Antar ke:</strong> Jl. Raya Sembayat No. 45</span>
+                        </div>
+                        <div class="lokasi-item">
+                            <span>📏</span>
+                            <span><strong>Jarak:</strong> 1.8 km (~6 menit)</span>
+                        </div>
+                    </div>
+                    <div class="pesanan-actions">
+                        <button class="action-btn btn-pickup" onclick="konfirmasiPickup('JY2025002')">
+                            📦 Konfirmasi Pickup
+                        </button>
+                        <button class="action-btn btn-navigasi" onclick="bukaMaps('Jl Raya Morobakung 45')">
+                            🗺 Ke Pelanggan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pesanan 3 - Sedang Delivery -->
+                <div class="pesanan-item">
+                    <div class="pesanan-header">
+                        <div class="pesanan-id">#JY2025003</div>
+                        <div class="pesanan-status status-delivery">🚚 Sedang Diantar</div>
+                    </div>
+                    <div class="pesanan-detail">
+                        <strong>Pelanggan:</strong> Mbak Dewi Sartika<br>
+                        <strong>Pesanan:</strong> 3x Keripik Usus Neng Oeoes<br>
+                        <strong>Total:</strong> Rp 150.000
+                    </div>
+                    <div class="pesanan-lokasi">
+                        <div class="lokasi-item">
+                            <span>🏠</span>
+                            <span><strong>Tujuan:</strong> Perumahan Griya Asri Blok C-12</span>
+                        </div>
+                        <div class="lokasi-item">
+                            <span>📞</span>
+                            <span><strong>HP:</strong> 0812-3456-7890</span>
+                        </div>
+                        <div class="lokasi-item">
+                            <span>📏</span>
+                            <span><strong>Sisa Jarak:</strong> 0.5 km (~2 menit)</span>
+                        </div>
+                    </div>
+                    <div class="pesanan-actions">
+                        <button class="action-btn btn-selesai" onclick="selesaikanPesanan('JY2025003')">
+                            ✨ Selesaikan
+                        </button>
+                        <button class="action-btn btn-navigasi" onclick="bukaMaps('Perumahan Griya Asri')">
+                            🗺 Navigasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earning Summary -->
+        <div class="earning-summary">
+            <div class="earning-amount" id="total-earning">Rp 1.850.000</div>
+            <div class="earning-label">Total Pendapatan Bulan Ini</div>
+        </div>
+    </div>
+
+    <script>
+        let isOnline = false;
+        let deliveryCount = 12;
+        let todayEarning = 150000;
+        let monthlyEarning = 1850000;
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Toggle status online/offline
+        function toggleStatus() {
+            const toggle = document.getElementById('toggle-switch');
+            const statusText = document.getElementById('status-text');
+            
+            isOnline = !isOnline;
+            
+            if (isOnline) {
+                toggle.classList.add('active');
+                statusText.textContent = 'Online';
+                statusText.classList.add('online');
+                playNotificationSound();
+                showNotification('Status berubah menjadi ONLINE! 🟢\nAnda akan menerima pesanan baru.');
+            } else {
+                toggle.classList.remove('active');
+                statusText.textContent = 'Offline';
+                statusText.classList.remove('online');
+                showNotification('Status berubah menjadi OFFLINE! 🔴\nAnda tidak akan menerima pesanan baru.');
+            }
+        }
+
+        // Terima pesanan
+        function terimaPesanan(pesananId) {
+            if (!isOnline) {
+                alert('Silakan aktifkan status ONLINE terlebih dahulu untuk menerima pesanan!');
+                return;
+            }
+            
+            if (confirm(Terima pesanan ${pesananId}?)) {
+                showNotification(Pesanan ${pesananId} berhasil diterima! 📦\nSilakan menuju lokasi pickup.);
+                
+                // Update status pesanan di UI
+                const pesananElement = document.querySelector([data-id="${pesananId}"]);
+                if (pesananElement) {
+                    const statusElement = pesananElement.querySelector('.pesanan-status');
+                    statusElement.textContent = '🚗 Sedang Pickup';
+                    statusElement.className = 'pesanan-status status-pickup';
+                }
+                
+                playNotificationSound();
+            }
+        }
+
+        // Konfirmasi pickup
+        function konfirmasiPickup(pesananId) {
+            if (confirm(Konfirmasi pickup pesanan ${pesananId}?)) {
+                showNotification(Pickup berhasil dikonfirmasi! 🎯\nSilakan antar ke pelanggan.);
+                
+                // Update status
+                const pesananElement = document.querySelector([data-id="${pesananId}"]);
+                if (pesananElement) {
+                    const statusElement = pesananElement.querySelector('.pesanan-status');
+                    statusElement.textContent = '🚚 Sedang Diantar';
+                    statusElement.className = 'pesanan-status status-delivery';
+                }
+                
+                playNotificationSound();
+            }
+        }
+
+        // Selesaikan pesanan
+        function selesaikanPesanan(pesananId) {
+            if (confirm(Konfirmasi pesanan ${pesananId} telah selesai diantar?)) {
+                deliveryCount++;
+                todayEarning += 12500; // Fee kurir per pesanan
+                monthlyEarning += 12500;
+                
+                // Update UI
+                document.getElementById('delivery-count').textContent = deliveryCount;
+                document.getElementById('earning-today').textContent = formatCurrency(todayEarning);
+                document.getElementById('total-earning').textContent = formatCurrency(monthlyEarning);
+                
+                showNotification(Pesanan ${pesananId} selesai! 🎉\nFee kurir: +Rp 12.500);
+                
+                // Remove pesanan dari daftar
+                const pesananElement = document.querySelector([data-id="${pesananId}"]);
+                if (pesananElement) {
+                    pesananElement.style.transition = 'all 0.5s ease';
+                    pesananElement.style.transform = 'translateX(100%)';
+                    pesananElement.style.opacity = '0';
+                    setTimeout(() => pesananElement.remove(), 500);
+                }
+                
+                playSuccessSound();
+            }
+        }
+
+        // Buka navigasi maps
+        function bukaMaps(lokasi) {
+            const encodedLokasi = encodeURIComponent(lokasi + ', Gresik, Jawa Timur');
+            const mapsUrl = https://www.google.com/maps/dir/?api=1&destination=${encodedLokasi};
+            
+            if (confirm(Buka Google Maps untuk navigasi ke:\n${lokasi}?)) {
+                window.open(mapsUrl, '_blank');
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            alert(message);
+        }
+
+        // Play notification sound (simulasi)
+        function playNotificationSound() {
+            console.log('🔔 Playing notification sound...');
+        }
+
+        // Play success sound (simulasi)
+        function playSuccessSound() {
+            console.log('🎉 Playing success sound...');
+        }
+
+        // Simulasi pesanan baru masuk
+        function simulasiPesananBaru() {
+            if (!isOnline) return;
+            
+            const pesananBaru = {
+                id: 'JY' + Date.now(),
+                pelanggan: 'Pelanggan ' + Math.floor(Math.random() * 100),
+                pedagang: 'Pedagang ' + Math.floor(Math.random() * 10),
+                total: Math.floor(Math.random() * 50000) + 10000
+            };
+            
+            showNotification(Pesanan baru masuk! 🚨\n${pesananBaru.id}\nTotal: ${formatCurrency(pesananBaru.total)});
+            playNotificationSound();
+        }
+
+        // Auto-refresh atau simulasi pesanan baru setiap 30 detik
+        setInterval(() => {
+            if (isOnline && Math.random() > 0.7) {
+                simulasiPesananBaru();
+            }
+        }, 30000);
+
+        // Add data attributes to pesanan items for easier manipulation
+        document.addEventListener('DOMContentLoaded', function() {
+            const pesananItems = document.querySelectorAll('.pesanan-item');
+            pesananItems.forEach((item, index) => {
+                const pesananId = item.querySelector('.pesanan-id').textContent;
+                item.setAttribute('data-id', pesananId);
+            });
+            
+            // Initial animation
+            pesananItems.forEach((item, index) => {
+                item.style.animationDelay = (index * 0.1) + 's';
+                item.style.animation = 'slideInUp 0.6s ease forwards';
+            });
+        });
+
+        // CSS animation untuk pesanan items
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
